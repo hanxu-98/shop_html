@@ -72,6 +72,9 @@ export default {
                       },{
                         index: 'Band',
                         title: '品牌管理'
+                      },{
+                        index: 'Attr',
+                        title: '属性管理'
                       }
                       ]
                 },
