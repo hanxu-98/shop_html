@@ -33,9 +33,9 @@
           <el-table-column prop="id" label="序号" width="55" align="center"></el-table-column>
           <el-table-column prop="name" label="品牌名" align="center"></el-table-column>
           <el-table-column prop="nameCH" label="首字母" align="center"></el-table-column>
-          <el-table-column prop="typeId" label="分类" align="center"></el-table-column>
-          <el-table-column prop="type" label="类型" align="center"></el-table-column>
-          <el-table-column prop="isSKU" label="是否SKU" align="center"></el-table-column>
+          <el-table-column prop="typeId" label="分类" :formatter="typeIdFun" align="center"></el-table-column>
+          <!--<el-table-column prop="type" label="类型" align="center"></el-table-column>-->
+          <el-table-column prop="isSKU" label="是否SKU" :formatter="isSKU_fun" align="center"></el-table-column>
 
 
           <el-table-column label="操作" width="180" align="center">
@@ -220,6 +220,16 @@
           this.queryTypeData();
         },
         methods:{
+          isSKU_fun(row,column,cell,index){
+            return cell==1?"是":cell==2?"否":"未知";
+          },
+          typeIdFun(row,column,cell,index){
+            for (let i = 0; i < this.typeData.length; i++) {
+              if (cell==this.typeData[i].id){
+                return this.typeData[i].name;
+              }
+            }
+          },
           editData(index,row){
             this.$axios.get('http://localhost:8080/api/attr/echoAttr?id='+row.id).then(res => {
               this.updateDataForm=res.data.data;
