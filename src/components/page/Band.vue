@@ -250,10 +250,10 @@
                   });
             },
             imgCallBack(response, file, fileList){//图片上传的回调函数
-                this.saveBandForm.imgpath="http://localhost:8080/"+response.filePath;
+                this.saveBandForm.imgpath=response.filePath;
             },
             upimgCallBack(response, file, fileList){//图片上传的回调函数
-                this.upBandForm.imgpath="http://localhost:8080/"+response.filePath;
+                this.upBandForm.imgpath=+response.filePath;
             },
 
             bandEdit(index,row){

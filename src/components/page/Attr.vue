@@ -31,9 +31,9 @@
         >
           <el-table-column type="selection" width="55" align="center"></el-table-column>
           <el-table-column prop="id" label="序号" width="55" align="center"></el-table-column>
-          <el-table-column prop="name" label="品牌名" align="center"></el-table-column>
-          <el-table-column prop="nameCH" label="首字母" align="center"></el-table-column>
           <el-table-column prop="typeId" label="分类" :formatter="typeIdFun" align="center"></el-table-column>
+          <el-table-column prop="name" label="属性名" align="center"></el-table-column>
+          <el-table-column prop="nameCH" label="首字母" align="center"></el-table-column>
           <!--<el-table-column prop="type" label="类型" align="center"></el-table-column>-->
           <el-table-column prop="isSKU" label="是否SKU" :formatter="isSKU_fun" align="center"></el-table-column>
 
@@ -45,6 +45,9 @@
               </el-button>
               <el-button type="text" icon="el-icon-delete" class="red"
                          @click="delData(scope.$index, scope.row)">删除
+              </el-button>
+              <el-button type="text" icon="el-icon-chat-line-square"
+                         @click="attrValueBtn(scope.$index, scope.row)">数据维护
               </el-button>
             </template>
           </el-table-column>
@@ -66,7 +69,7 @@
 
       <!--新增模板-->
       <div id="saveDataDiv">
-        <el-dialog title="品牌信息" :visible.sync="addFormFlag" width="30%">
+        <el-dialog title="属性新增" :visible.sync="addFormFlag" width="30%">
 
           <el-form :model="saveDataForm" ref="saveDataForm"  label-width="100px">
             <el-form-item label="属性名称" prop="name">
@@ -117,9 +120,8 @@
 
 
       <!--修改模板-->
-      <!--新增模板-->
       <div id="updateDataDiv">
-        <el-dialog title="品牌信息" :visible.sync="updateFormFlag" width="30%">
+        <el-dialog title="属性修改" :visible.sync="updateFormFlag" width="30%">
 
           <el-form :model="updateDataForm" ref="updateDataForm"  label-width="100px">
             <el-form-item label="属性名称" prop="name">
@@ -169,6 +171,93 @@
 
 
 
+
+
+
+
+      <!--值表框-->
+
+      <div id="valueDataTableDiv">
+        <el-dialog :title="attrName" :visible.sync="valueTableFlag" width="60%">
+          <div class="handle-box">
+            <el-button type="success" icon="el-icon-plus" @click="addValueFormFlag=true">新增</el-button>
+          </div>
+
+          <el-table
+            :data="valueData"
+            border
+            class="table"
+            ref="valueTable"
+            header-cell-class-name="table-header"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" width="55" align="center"></el-table-column>
+            <el-table-column prop="id" label="序号" width="55" align="center"></el-table-column>
+            <el-table-column prop="attrName" label="属性" align="center"></el-table-column>
+            <el-table-column prop="name" label="属性值" align="center"></el-table-column>
+            <el-table-column prop="nameCH" label="首字母" align="center"></el-table-column>
+            <el-table-column label="操作" width="180" align="center">
+              <template slot-scope="scope">
+                <el-button type="text" icon="el-icon-edit"
+                           @click="editValueData(scope.$index, scope.row)">编辑
+                </el-button>
+                <el-button type="text" icon="el-icon-delete" class="red"
+                           @click="delValueData(scope.$index, scope.row)">删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+
+        </el-dialog>
+      </div>
+
+
+      <!--值新增 -->
+      <div id="saveValueDataDiv">
+        <el-dialog title="属性新增" :visible.sync="addValueFormFlag" width="30%">
+
+          <el-form :model="saveValueDataForm" ref="saveValueDataForm"  label-width="100px">
+            <el-form-item label="属性值" prop="name">
+              <el-input v-model="saveValueDataForm.name" width="200px"></el-input>
+            </el-form-item>
+
+            <el-form-item label="首字母" prop="nameCH">
+              <el-input v-model="saveValueDataForm.nameCH" width="200px"></el-input>
+            </el-form-item>
+
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="addValueFormFlag = false">取 消</el-button>
+            <el-button type="primary" @click="saveValueData">确 定</el-button>
+          </div>
+        </el-dialog>
+      </div>
+
+
+      <!--值修改 -->
+      <div id="updateValueDataDiv">
+        <el-dialog title="属性修改" :visible.sync="updateValueFormFlag" width="30%">
+
+          <el-form :model="updateValueDataForm" ref="updateValueDataForm"  label-width="100px">
+            <el-form-item label="属性值" prop="name">
+              <el-input v-model="updateValueDataForm.name" width="200px"></el-input>
+            </el-form-item>
+
+            <el-form-item label="首字母" prop="nameCH">
+              <el-input v-model="updateValueDataForm.nameCH" width="200px"></el-input>
+            </el-form-item>
+
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="updateValueFormFlag = false">取 消</el-button>
+            <el-button type="primary" @click="updateValueData">确 定</el-button>
+          </div>
+        </el-dialog>
+      </div>
+
+
+
+
     </div>
 </template>
 
@@ -191,7 +280,8 @@
 
             /*类型信息*/
             typeData:[],
-
+            axiosData:[],
+            str:'',
             /*新增*/
             addFormFlag:false,
             saveDataForm:{
@@ -212,6 +302,30 @@
               typeId:null,
               type:null,
               isSKU:null
+            },
+            /*值表格*/
+            attrName:'',
+            valueTableFlag:false,
+            valueData:[],
+
+            valueFormAttrId:null,
+            /*值新增*/
+
+            addValueFormFlag:false,
+            saveValueDataForm:{
+                id:null,
+                name:'',
+                nameCH:'',
+                attrId:null
+            },
+
+            /*值修改*/
+            updateValueFormFlag:false,
+            updateValueDataForm:{
+                id:null,
+                name:'',
+                nameCH:'',
+                attrId:null
             }
           }
         },
@@ -220,13 +334,86 @@
           this.queryTypeData();
         },
         methods:{
+
+          delValueData(index,row){
+             this.$axios.delete('http://localhost:8080/api/attr/delAttrValue?id='+row.id).then(res => {
+              this.queryValueData();
+            }).catch(er => {
+              alert("删除值系统异常")
+            });
+          },
+
+
+          updateValueData(){
+            var params=this.$qs.stringify(this.updateValueDataForm);
+
+            this.$axios.post('http://localhost:8080/api/attr/saveAttrValue',params).then(res => {
+              this.updateValueFormFlag=false;
+              this.$refs['updateValueDataForm'].resetFields();
+              this.queryValueData();
+
+            }).catch(er => {
+              alert("查询值系统异常")
+            });
+
+          },
+
+
+          editValueData(index,row){
+            this.$axios.get('http://localhost:8080/api/attr/echoAttrValue?id='+row.id).then(res => {
+              this.updateValueDataForm=res.data.data;
+              this.updateValueFormFlag=true;
+            }).catch(er => {
+              alert("值回显系统异常")
+            });
+          },
+
+          saveValueData(){
+            this.saveValueDataForm.attrId=this.valueFormAttrId;
+            var params=this.$qs.stringify(this.saveValueDataForm);
+
+            this.$axios.post('http://localhost:8080/api/attr/saveAttrValue',params).then(res => {
+              alert("新增成功");
+              this.addValueFormFlag=false;
+              this.$refs['saveValueDataForm'].resetFields();
+              this.queryValueData();
+
+            }).catch(er => {
+              alert("查询值系统异常")
+            });
+
+
+          },
+          attrValueBtn(index,row){
+            this.attrName=row.name;
+            this.valueTableFlag=true;
+            this.valueFormAttrId=row.id;
+            this.queryValueData();
+
+
+          },
+          queryValueData(){
+
+            this.$axios.get('http://localhost:8080/api/attr/queryAttrValue?attrId='+this.valueFormAttrId).then(res => {
+              if (res.data.data.length>0){
+                this.valueData = res.data.data;
+
+              this.valueFormAttrId=res.data.data[0].attrId;
+              } else {
+                alert('此属性暂无值');
+              }
+
+            }).catch(er => {
+              alert("查询值系统异常")
+            });
+          },
           isSKU_fun(row,column,cell,index){
             return cell==1?"是":cell==2?"否":"未知";
           },
           typeIdFun(row,column,cell,index){
-            for (let i = 0; i < this.typeData.length; i++) {
-              if (cell==this.typeData[i].id){
-                return this.typeData[i].name;
+            for (let i = 0; i < this.axiosData.length; i++) {
+              if (cell==this.axiosData[i].id){
+                return this.axiosData[i].name;
               }
             }
           },
@@ -241,7 +428,6 @@
 
           updateData(){
             let params = this.$qs.stringify(this.updateDataForm);
-            debugger;
             this.$axios.post('http://localhost:8080/api/attr/updateAttr', params).then(res => {
               //关闭弹框
               this.updateFormFlag = false;
@@ -263,11 +449,54 @@
           },
           queryTypeData(){
             this.$axios.get('http://localhost:8080/api/type/getData').then(data=>{
-                this.typeData=data.data.data;  // 把请求的数据  赋给全局
+                let li=this.axiosData=data.data.data;  // 把请求的数据  赋给全局
+
+                for (let i = 0; i < li.length; i++) {
+                   this.str="";
+                    if (li[i].pid==1){
+                        this.createTypeData(li[i]);
+                    }
+                }
+
+
+
+
             }).catch(er=>{
               alert('查询分类异常');
             });
           },
+          createTypeData(obj){
+              let flag=this.isParent(obj.id);
+              if (flag==true){
+                this.str+=obj.name+"/";
+                let li = this.axiosData;
+                for (let i = 0; i < li.length; i++) {
+                  if (li[i].pid == obj.id) {
+                    this.createTypeData(li[i]);
+                  }
+                }
+              }
+              /*slse*/
+              else {
+                let ty={};
+                ty.id=obj.id;
+                ty.name=this.str+obj.name;
+                this.typeData.push(ty);
+
+              }
+          },
+          isParent(id){
+            let li = this.axiosData;
+            for (let i = 0; i < li.length; i++) {
+              if (li[i].pid == id) {
+                return true;
+                /*return 子节点数量*/
+              }
+            }
+            return false;
+
+          },
+
           queryData(){
             let params=this.$qs.stringify(this.seachForm);
             this.$axios.post('http://localhost:8080/api/attr/queryAttr',params).then(res=>{
