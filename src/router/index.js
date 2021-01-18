@@ -22,7 +22,11 @@ export default new Router({
               {
                 path: '/band',
                 component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Band.vue'),
-                meta: {title: '系统首页'}
+                meta: {title: '品牌管理'}
+              },{
+                path: '/Product',
+                component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Product.vue'),
+                meta: {title: '商品添加'}
               },
               {
                   path: '/test',

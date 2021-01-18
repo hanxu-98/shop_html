@@ -490,6 +490,58 @@
           },
           queryTypeData(){
             this.$axios.get('http://localhost:8080/api/type/getData').then(data=>{
+                this.axiosData=data.data.data;  // 把请求的数据  赋给全局
+                this. getChildrenType();
+
+
+
+                for (let i = 0; i < this.typeData.length; i++) {
+                   this.str="";
+                   this.createTypeData(this.typeData[i]);
+                    this.typeData[i].name=this.str.split("/").reverse().join("/").substr(0,this.str.length-1);
+                }
+
+            }).catch(er=>{
+              alert('查询分类异常');
+            });
+          },
+          //得到types的数据      遍历所有ajaxtypedata
+          getChildrenType: function () {
+            //遍历所有的节点数据
+            for (let i = 0; i < this.axiosData.length; i++) {
+              let node = this.axiosData[i];
+              this.isChildrenNode(node);
+            }
+          },
+
+          isChildrenNode: function (node) {
+            let rs = true; //标示
+            for (let i = 0; i < this.axiosData.length; i++) {
+              if (node.id == this.axiosData[i].pid) {
+                rs = false;
+                break;
+              }
+            }
+            if (rs == true) {
+              this.typeData.push(node);
+            }
+          },
+          createTypeData(obj){
+             if (obj.pid!=1){
+               this.str+="/"+obj.name;
+               for (let i = 0; i < this.axiosData.length; i++) {
+                 if (obj.pid==this.axiosData[i].id){
+                   this.createTypeData(this.axiosData[i]);
+                 }
+               }
+             }else {
+                this.str+="/"+obj.name;
+             }
+          },
+
+
+          /*queryTypeData(){
+            this.$axios.get('http://localhost:8080/api/type/getData').then(data=>{
                 let li=this.axiosData=data.data.data;  // 把请求的数据  赋给全局
 
                 for (let i = 0; i < li.length; i++) {
@@ -517,7 +569,7 @@
                   }
                 }
               }
-              /*slse*/
+              /!*slse*!/
               else {
                 let ty={};
                 ty.id=obj.id;
@@ -531,12 +583,12 @@
             for (let i = 0; i < li.length; i++) {
               if (li[i].pid == id) {
                 return true;
-                /*return 子节点数量*/
+                /!*return 子节点数量*!/
               }
             }
             return false;
 
-          },
+          },*/
 
           queryData(){
             let params=this.$qs.stringify(this.seachForm);

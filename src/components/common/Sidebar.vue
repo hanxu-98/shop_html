@@ -75,6 +75,9 @@ export default {
                       },{
                         index: 'Attr',
                         title: '属性管理'
+                      },{
+                        index: 'Product',
+                        title: '商品添加'
                       }
                       ]
                 },
