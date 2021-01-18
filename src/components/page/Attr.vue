@@ -46,7 +46,7 @@
               <el-button type="text" icon="el-icon-delete" class="red"
                          @click="delData(scope.$index, scope.row)">删除
               </el-button>
-              <el-button type="text" icon="el-icon-chat-line-square"
+              <el-button type="text" icon="el-icon-chat-line-square" v-if="scope.row.type!=3"
                          @click="attrValueBtn(scope.$index, scope.row)">数据维护
               </el-button>
             </template>
@@ -69,9 +69,9 @@
 
       <!--新增模板-->
       <div id="saveDataDiv">
-        <el-dialog title="属性新增" :visible.sync="addFormFlag" width="30%">
+        <el-dialog title="属性新增"   :visible.sync="addFormFlag" width="30%">
 
-          <el-form :model="saveDataForm" ref="saveDataForm"  label-width="100px">
+          <el-form :model="saveDataForm" ref="saveDataForm" :rules="rules" label-width="100px">
             <el-form-item label="属性名称" prop="name">
               <el-input v-model="saveDataForm.name" width="200px"></el-input>
             </el-form-item>
@@ -123,7 +123,7 @@
       <div id="updateDataDiv">
         <el-dialog title="属性修改" :visible.sync="updateFormFlag" width="30%">
 
-          <el-form :model="updateDataForm" ref="updateDataForm"  label-width="100px">
+          <el-form :model="updateDataForm" :rules="rules" ref="updateDataForm"  label-width="100px">
             <el-form-item label="属性名称" prop="name">
               <el-input v-model="updateDataForm.name" width="200px"></el-input>
             </el-form-item>
@@ -214,9 +214,9 @@
 
       <!--值新增 -->
       <div id="saveValueDataDiv">
-        <el-dialog title="属性新增" :visible.sync="addValueFormFlag" width="30%">
+        <el-dialog title="属性新增"  :visible.sync="addValueFormFlag" width="30%">
 
-          <el-form :model="saveValueDataForm" ref="saveValueDataForm"  label-width="100px">
+          <el-form :model="saveValueDataForm" ref="saveValueDataForm"  :rules="rulesValue" label-width="100px">
             <el-form-item label="属性值" prop="name">
               <el-input v-model="saveValueDataForm.name" width="200px"></el-input>
             </el-form-item>
@@ -238,7 +238,7 @@
       <div id="updateValueDataDiv">
         <el-dialog title="属性修改" :visible.sync="updateValueFormFlag" width="30%">
 
-          <el-form :model="updateValueDataForm" ref="updateValueDataForm"  label-width="100px">
+          <el-form :model="updateValueDataForm" ref="updateValueDataForm" :rules="rulesValue"  label-width="100px">
             <el-form-item label="属性值" prop="name">
               <el-input v-model="updateValueDataForm.name" width="200px"></el-input>
             </el-form-item>
@@ -277,6 +277,19 @@
             /*表格*/
             tableData:[],
 
+            rules: {
+              name: [
+                {required: true, message: '请输入属性名称', trigger: 'blur'},
+                {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
+              ],
+              nameCH: [
+                {required: true, message: '请输入属性中文名称', trigger: 'blur'},
+                {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
+              ],
+              typeId: [
+                {required: true, message: '请选择一个类型', trigger: 'change'}
+              ]
+            },
 
             /*类型信息*/
             typeData:[],
@@ -309,6 +322,20 @@
             valueData:[],
 
             valueFormAttrId:null,
+
+
+            //属性值的验证
+            rulesValue: {
+              name: [
+                {required: true, message: '请输入属性值英文名称', trigger: 'blur'},
+                {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
+              ],
+              nameCH: [
+                {required: true, message: '请输入属性值中文名称', trigger: 'blur'},
+                {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
+              ]
+            },
+
             /*值新增*/
 
             addValueFormFlag:false,
@@ -344,18 +371,20 @@
           },
 
 
-          updateValueData(){
-            var params=this.$qs.stringify(this.updateValueDataForm);
+          updateValueData() {
+            this.$refs['updateValueDataForm'].validate((re, obj) => {
+              if (re == true) {
+                var params = this.$qs.stringify(this.updateValueDataForm);
+                this.$axios.post('http://localhost:8080/api/attr/saveAttrValue', params).then(res => {
+                  this.updateValueFormFlag = false;
+                  this.$refs['updateValueDataForm'].resetFields();
+                  this.queryValueData();
 
-            this.$axios.post('http://localhost:8080/api/attr/saveAttrValue',params).then(res => {
-              this.updateValueFormFlag=false;
-              this.$refs['updateValueDataForm'].resetFields();
-              this.queryValueData();
-
-            }).catch(er => {
-              alert("查询值系统异常")
-            });
-
+                }).catch(er => {
+                  alert("查询值系统异常")
+                });
+              }
+            })
           },
 
 
@@ -369,18 +398,22 @@
           },
 
           saveValueData(){
-            this.saveValueDataForm.attrId=this.valueFormAttrId;
-            var params=this.$qs.stringify(this.saveValueDataForm);
+            this.$refs['saveValueDataForm'].validate((re, obj) => {
+              if (re == true) {
+                this.saveValueDataForm.attrId = this.valueFormAttrId;
+                var params = this.$qs.stringify(this.saveValueDataForm);
 
-            this.$axios.post('http://localhost:8080/api/attr/saveAttrValue',params).then(res => {
-              alert("新增成功");
-              this.addValueFormFlag=false;
-              this.$refs['saveValueDataForm'].resetFields();
-              this.queryValueData();
+                this.$axios.post('http://localhost:8080/api/attr/saveAttrValue', params).then(res => {
+                  alert("新增成功");
+                  this.addValueFormFlag = false;
+                  this.$refs['saveValueDataForm'].resetFields();
+                  this.queryValueData();
 
-            }).catch(er => {
-              alert("查询值系统异常")
-            });
+                }).catch(er => {
+                  alert("查询值系统异常")
+                });
+              }
+            })
 
 
           },
@@ -426,26 +459,34 @@
             });
           },
 
-          updateData(){
-            let params = this.$qs.stringify(this.updateDataForm);
-            this.$axios.post('http://localhost:8080/api/attr/updateAttr', params).then(res => {
-              //关闭弹框
-              this.updateFormFlag = false;
-              this.queryData();
-            }).catch(er => {
-              alert("修改系统异常")
-            });
+          updateData() {
+            this.$refs['updateDataForm'].validate((re, obj) => {
+              if (re == true) {
+                let params = this.$qs.stringify(this.updateDataForm);
+                this.$axios.post('http://localhost:8080/api/attr/updateAttr', params).then(res => {
+                  //关闭弹框
+                  this.updateFormFlag = false;
+                  this.queryData();
+                }).catch(er => {
+                  alert("修改系统异常")
+                });
+              }
+            })
           },
 
           saveData() {
-            let params = this.$qs.stringify(this.saveDataForm);
-            this.$axios.post('http://localhost:8080/api/attr/saveAttr', params).then(res => {
-              //关闭弹框
-              this.addFormFlag = false;
-              this.queryData();
-            }).catch(er => {
-              alert("保存系统异常")
-            });
+            this.$refs['saveDataForm'].validate((re, obj) => {
+              if (re == true) {
+                let params = this.$qs.stringify(this.saveDataForm);
+                this.$axios.post('http://localhost:8080/api/attr/saveAttr', params).then(res => {
+                  //关闭弹框
+                  this.addFormFlag = false;
+                  this.queryData();
+                }).catch(er => {
+                  alert("保存系统异常")
+                });
+              }
+            })
           },
           queryTypeData(){
             this.$axios.get('http://localhost:8080/api/type/getData').then(data=>{
