@@ -78,6 +78,9 @@ export default {
                       },{
                         index: 'Product',
                         title: '商品添加'
+                      },{
+                        index: 'ProductShow',
+                        title: '商品展示'
                       }
                       ]
                 },

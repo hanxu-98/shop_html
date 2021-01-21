@@ -253,7 +253,7 @@
                 this.saveBandForm.imgpath=response.filePath;
             },
             upimgCallBack(response, file, fileList){//图片上传的回调函数
-                this.upBandForm.imgpath=+response.filePath;
+                this.upBandForm.imgpath=response.filePath;
             },
 
             bandEdit(index,row){

@@ -104,7 +104,7 @@
             <el-form-item label="是否是SKU" prop="isSKU">
               <el-radio-group v-model="saveDataForm.isSKU">
                 <el-radio label="1" name="isSKU">是</el-radio>
-                <el-radio label="2" name="isSKU">否</el-radio>
+                <el-radio label="0" name="isSKU">否</el-radio>
               </el-radio-group>
             </el-form-item>
 
@@ -149,14 +149,14 @@
                 <el-radio :label="1" name="type">单选</el-radio>
                 <el-radio :label="2" name="type">复选</el-radio>
                 <el-radio :label="3" name="type">输入框</el-radio>
-                <el-radio :label="4" name="type">下拉框</el-radio>
+                <el-radio :label="0" name="type">下拉框</el-radio>
               </el-radio-group>
             </el-form-item>
 
             <el-form-item label="是否是SKU" prop="isSKU">
               <el-radio-group v-model="updateDataForm.isSKU">
                 <el-radio :label="1" name="isSKU">是</el-radio>
-                <el-radio :label="2" name="isSKU">否</el-radio>
+                <el-radio :label="0" name="isSKU">否</el-radio>
               </el-radio-group>
             </el-form-item>
 
@@ -441,7 +441,7 @@
             });
           },
           isSKU_fun(row,column,cell,index){
-            return cell==1?"是":cell==2?"否":"未知";
+            return cell==1?"是":cell==0?"否":"未知";
           },
           typeIdFun(row,column,cell,index){
             for (let i = 0; i < this.axiosData.length; i++) {
@@ -540,55 +540,7 @@
           },
 
 
-          /*queryTypeData(){
-            this.$axios.get('http://localhost:8080/api/type/getData').then(data=>{
-                let li=this.axiosData=data.data.data;  // 把请求的数据  赋给全局
 
-                for (let i = 0; i < li.length; i++) {
-                   this.str="";
-                    if (li[i].pid==1){
-                        this.createTypeData(li[i]);
-                    }
-                }
-
-
-
-
-            }).catch(er=>{
-              alert('查询分类异常');
-            });
-          },
-          createTypeData(obj){
-              let flag=this.isParent(obj.id);
-              if (flag==true){
-                this.str+=obj.name+"/";
-                let li = this.axiosData;
-                for (let i = 0; i < li.length; i++) {
-                  if (li[i].pid == obj.id) {
-                    this.createTypeData(li[i]);
-                  }
-                }
-              }
-              /!*slse*!/
-              else {
-                let ty={};
-                ty.id=obj.id;
-                ty.name=this.str+obj.name;
-                this.typeData.push(ty);
-
-              }
-          },
-          isParent(id){
-            let li = this.axiosData;
-            for (let i = 0; i < li.length; i++) {
-              if (li[i].pid == id) {
-                return true;
-                /!*return 子节点数量*!/
-              }
-            }
-            return false;
-
-          },*/
 
           queryData(){
             let params=this.$qs.stringify(this.seachForm);
