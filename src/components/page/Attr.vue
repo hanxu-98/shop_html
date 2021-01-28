@@ -97,7 +97,7 @@
                 <el-radio label="1" name="type">单选</el-radio>
                 <el-radio label="2" name="type">复选</el-radio>
                 <el-radio label="3" name="type">输入框</el-radio>
-                <el-radio label="4" name="type">下拉框</el-radio>
+                <el-radio label="0" name="type">下拉框</el-radio>
               </el-radio-group>
             </el-form-item>
 
@@ -142,7 +142,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-
+          <!--  0 下拉框     1 单选框      2  复选框   3  输入框  -->
 
             <el-form-item label="类型" prop="type">
               <el-radio-group v-model="updateDataForm.type">

@@ -7,10 +7,15 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/dashboard'
+      redirect: '/login'
     },
     {
-      path: '/',
+            path: '/login',
+            component: () => import(/* webpackChunkName: "login" */ '../components/page/Login.vue'),
+            meta: { title: '登录' }
+    },
+    {
+      path: '/show',
       component: () => import(/* webpackChunkName: "home" */ '../components/common/Home.vue'),
       meta: {title: '自述文件'},
       children: [
