@@ -90,6 +90,11 @@ export default {
                     title: '测试'
                 },
                 {
+                    icon: 'el-icon-lx-cascades',
+                    index: 'Menu',
+                    title: '权限管理'
+                },
+                {
                     icon: 'el-icon-lx-calendar',
                     index: '3',
                     title: '表单相关',

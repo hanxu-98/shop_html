@@ -10,9 +10,9 @@ export default new Router({
       redirect: '/login'
     },
     {
-            path: '/login',
-            component: () => import(/* webpackChunkName: "login" */ '../components/page/Login.vue'),
-            meta: { title: '登录' }
+      path: '/login',
+      component: () => import(/* webpackChunkName: "login" */ '../components/page/Login.vue'),
+      meta: { title: '登录' }
     },
     {
       path: '/show',
@@ -48,10 +48,16 @@ export default new Router({
                   meta: {title: '分类管理'}
               },
               {
+                path: '/Menu',
+                component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Menu.vue'),
+                meta: {title: '权限管理'}
+              },
+              {
                   path: '/Attr',
                   component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Attr.vue'),
                   meta: {title: '分类管理'}
               }
+
       ]
     }
   ]
