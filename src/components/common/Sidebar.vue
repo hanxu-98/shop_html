@@ -95,6 +95,11 @@ export default {
                     title: '权限管理'
                 },
                 {
+                    icon: 'el-icon-lx-cascades',
+                    index: 'Role',
+                    title: '角色管理'
+                },
+                {
                     icon: 'el-icon-lx-calendar',
                     index: '3',
                     title: '表单相关',
