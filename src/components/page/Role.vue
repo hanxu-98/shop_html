@@ -26,10 +26,15 @@
 
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
-                      <el-button  type="text" icon="el-icon-edit"
-                            @click="roleEdit(scope.$index, scope.row)">编辑</el-button>
-                          <el-button type="text" icon="el-icon-delete" class="red"
-                            @click="roleDelete(scope.$index, scope.row)">删除</el-button>
+                      <el-button type="text" icon="el-icon-edit"
+                                 @click="roleEdit(scope.$index, scope.row)">编辑
+                      </el-button>
+                      <el-button type="text" icon="el-icon-delete" class="red"
+                                 @click="roleDelete(scope.$index, scope.row)">删除
+                      </el-button>
+                      <el-button type="text"
+                                 @click="grantMenu(scope.$index, scope.row)">赋权限
+                      </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -67,6 +72,28 @@
         </div>
 
 
+      <div id="grantMneuDiv">
+          <el-dialog title="权限信息"   :visible.sync="showMenuFlag" width="30%">
+            <el-form v-model="roleMenuForm"  label-width="80px">
+
+
+              <el-form-item label="权限" prop="menu">
+                <el-checkbox-group v-model="roleMenuForm.mids" >
+                  <el-checkbox v-for="menu in axData" :key="menu.id" :label="menu.id">{{menu.name}}</el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+
+
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="saveRoleMenu">确 定</el-button>
+            </div>
+          </el-dialog>
+        </div>
+
+
+
+
     </div>
 </template>
 
@@ -74,6 +101,10 @@
     const defaulForm = {
               id:null,
               name:''
+    };
+    const defaulMenuForm = {
+              rid:null,
+              mids:[]
     };
     export default {
         name: "Role",
@@ -89,13 +120,48 @@
             tableData:[],
 
             saveForm:Object.assign({},defaulForm),
-            showFormFlag:false
+            showFormFlag:false,
+
+
+            axData:[],
+
+
+            roleMenuForm:Object.assign({},defaulMenuForm),
+            /*赋权限*/
+            showMenuFlag:false,
+
           }
         },
         async created(){
           await this.queryRole();
+          await this.queryMenu();
+
         },
         methods:{
+          async saveRoleMenu(){
+              let res =await this.$axios.post('http://localhost:8080/api/role/saveRoleMenu?rid='+this.roleMenuForm.rid+"&mids="+this.roleMenuForm.mids.toString());
+              this.roleMenuForm=Object.assign({},defaulMenuForm);
+              this.showMenuFlag=false;
+              alert("成功");
+              },
+
+
+          async queryMenu(){
+             let res = await this.$axios.get('http://localhost:8080/api/menu/queryData');
+             this.axData=res.data.data;  // 把请求的数据  赋给全局
+          },
+          async grantMenu(index,row){
+               this.roleMenuForm.rid=row.id;
+               debugger;
+               let res =await this.$axios.get('http://localhost:8080/api/role/echoRoleMenu?rid='+row.id);
+                debugger;
+               this.roleMenuForm.mids=res.data.data;
+
+              this.showMenuFlag=true;
+
+
+          },
+
           roleDelete(index,row){
               this.$axios.delete('http://localhost:8080/api/role/delRole?id='+row.id).then(data=>{
                   alert('删除成功');
