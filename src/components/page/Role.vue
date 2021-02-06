@@ -18,7 +18,7 @@
                 :data="tableData"
                 border
                 class="table"
-                ref="bandTable"
+                ref="roleTable"
                 header-cell-class-name="table-header"
             >
                 <el-table-column prop="id" label="序号" width="55" align="center"></el-table-column>
@@ -152,9 +152,7 @@
           },
           async grantMenu(index,row){
                this.roleMenuForm.rid=row.id;
-               debugger;
                let res =await this.$axios.get('http://localhost:8080/api/role/echoRoleMenu?rid='+row.id);
-                debugger;
                this.roleMenuForm.mids=res.data.data;
 
               this.showMenuFlag=true;

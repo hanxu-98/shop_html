@@ -100,6 +100,11 @@ export default {
                     title: '角色管理'
                 },
                 {
+                    icon: 'el-icon-lx-cascades',
+                    index: 'User',
+                    title: '用户管理'
+                },
+                {
                     icon: 'el-icon-lx-calendar',
                     index: '3',
                     title: '表单相关',

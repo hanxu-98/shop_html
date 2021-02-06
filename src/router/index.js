@@ -58,6 +58,11 @@ export default new Router({
                 meta: {title: '角色管理'}
               },
               {
+                path: '/User',
+                component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/User.vue'),
+                meta: {title: '角色管理'}
+              },
+              {
                   path: '/Attr',
                   component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Attr.vue'),
                   meta: {title: '分类管理'}
